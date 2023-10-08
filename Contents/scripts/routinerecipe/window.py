@@ -6,8 +6,10 @@ import sys
 import logging
 
 from PySide2.QtWidgets \
-    import QMainWindow, QMenu, QAction, QApplication
+    import QMainWindow, QMenu, QAction, QApplication, QWidget
 from PySide2 import QtWidgets
+from PySide2 import QtCore
+import shiboken2
 
 from maya.app.general import mayaMixin
 
@@ -86,9 +88,11 @@ def node_editor_main(app):
 
     return scene, view, [node_a, node_b]
 
-
-class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
+# NOTE: DockableMixinを継承すると破棄されなくなる => 問題！！！
+# class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self, node_editor_view, parent=None, *args, **kwargs):
+
         super(MainWindow, self).__init__(parent, *args, **kwargs)
         self.initUI(node_editor_view)
 
@@ -96,6 +100,9 @@ class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         self.setGeometry(500, 300, 400, 270)
         self.setWindowTitle('Routine Recipe')
         self.setObjectName('RoutineRecipe')
+        self.setProperty('saveWindowPref', True) # あってもダメそう
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
 
         openMenu = QMenu("Open")
         openMenu.addAction("help")
@@ -118,19 +125,35 @@ class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 
 
 def main_start():
-    test = omui.MQtUtil.findControl('RoutineRecipe')
+    # maya_main_window_ptr = omui.MQtUtil.mainWindow()
+    # print(type(maya_main_window_ptr))
+    # print((maya_main_window_ptr))
+    # ist = shiboken2.wrapInstance(int(maya_main_window_ptr), QWidget)
+    # print(type(ist))
+    # print((ist))
 
-    if test is not None:
-        cmds.setFocus('RoutineRecipe')
+    ptr = omui.MQtUtil.findControl('RoutineRecipe')
+    if ptr is not None:
+        print('存在しています')
+        instance = shiboken2.wrapInstance(int(ptr), QWidget)
+        name = omui.MQtUtil.fullName(shiboken2.getCppPointer(instance)[0])
+        cmds.setFocus(name)
         return
-        # cmds.deleteUI('RoutineRecipe')
-        # cmds.deleteUI('RoutineRecipe' + 'WorkspaceControl')
+        # cmds.deleteUI(name + 'WorkspaceControl')
+
+    # if test is not None:
+    #     # print(test)
+    #     cmds.setFocus('RoutineRecipe')
+    #     # cmds.deleteUI('RoutineRecipe' + 'WorkspaceControl')
+    #     return
+    #     # cmds.deleteUI('RoutineRecipe')
 
     logging.basicConfig(level='DEBUG')
     app = QApplication.instance()
     scene, view, nodes = node_editor_main(app)
     main_window = MainWindow(view)
-    main_window.show(dockable=True)
+    # main_window.show(dockable=True)
+    main_window.show()
     # print(main_window.showRepr())
 
     # topLevelWidgets = QApplication.topLevelWidgets()
