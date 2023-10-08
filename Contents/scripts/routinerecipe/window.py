@@ -11,6 +11,8 @@ from PySide2 import QtWidgets
 
 from maya.app.general import mayaMixin
 
+from maya import OpenMayaUI as omui
+
 from .nodeeditor.node_data import NodeData, NodeDataModel, NodeDataType
 from .nodeeditor.data_model_registry import DataModelRegistry
 from .nodeeditor.flow_scene import FlowScene
@@ -93,7 +95,7 @@ class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
     def initUI(self, node_editor_view):
         self.setGeometry(500, 300, 400, 270)
         self.setWindowTitle('Routine Recipe')
-        # self.setObjectName('RoutineRecipe')
+        self.setObjectName('RoutineRecipe')
 
         openMenu = QMenu("Open")
         openMenu.addAction("help")
@@ -116,9 +118,13 @@ class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 
 
 def main_start():
-    # if cmds.window('RoutineRecipe', ex=True):
-    #     cmds.deleteUI('RoutineRecipe')
-    #     cmds.deleteUI('RoutineRecipe' + 'WorkspaceControl')
+    test = omui.MQtUtil.findControl('RoutineRecipe')
+
+    if test is not None:
+        cmds.setFocus('RoutineRecipe')
+        return
+        # cmds.deleteUI('RoutineRecipe')
+        # cmds.deleteUI('RoutineRecipe' + 'WorkspaceControl')
 
     logging.basicConfig(level='DEBUG')
     app = QApplication.instance()
@@ -143,4 +149,3 @@ def main_start():
 # TODO:
 # - Mayaを起動しなおすとDockableが復元されない(https://qiita.com/sporty/items/a26ea7e4691437a6e8c8)
 # - windowの出現位置を覚えさせる
-# - すでに存在する場合は処理を飛ばすようにする。
