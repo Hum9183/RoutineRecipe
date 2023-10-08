@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0.0"
+	ProductType="Application"
+
+	AutodeskProduct="Maya"
+	Name="RoutineRecipe"
+	Description="Visual scripting tool"
+	AppVersion="1.0.0"
+	Author="Hum"
+	AppNameSpace="com.autodesk.exchange.maya.routinerecipe"
+	HelpFile=""
+	OnlineDocumentation=""
+
+	ProductCode="*"
+>
+
+	<CompanyDetails Name="Hum"
+		Phone=" "
+		Url=""
+		Email="" />
+
+	<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2022"/>
+
+	<Components>
+		<RuntimeRequirements SupportPath="./Contents" OS="win64" Platform="Maya" SeriesMin="2022"/>
+		<ComponentEntry ModuleName="./scripts/userSetup.py" />
+	</Components>
+
+</ApplicationPackage>
