@@ -16,7 +16,7 @@ from maya.app.general import mayaMixin
 logger = logging.getLogger(__name__)
 
 
-class FlowView(mayaMixin.MayaQWidgetDockableMixin, QGraphicsView):
+class FlowView(QGraphicsView):
     def __init__(self, scene, parent=None):
         super().__init__(parent=parent)
 

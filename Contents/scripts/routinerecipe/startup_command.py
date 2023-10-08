@@ -16,11 +16,13 @@ def routine_recipe_reload_modules():
     ...
 
 def routine_recipe_show_window():
-    from routinerecipe.window import Window
-    from routinerecipe.const import Const
-    wnd = Window(Const.TOOL_NAME)
-    wnd.show()
-
+    from routinerecipe import window
+    import importlib
+    importlib.reload(window)
+    # from routinerecipe.const import Const
+    # wnd = Window(Const.TOOL_NAME)
+    # wnd.show()
+    window.main_start()
 
 if __name__ == '__main__':
     routine_recipe_startup_command()
