@@ -6,7 +6,7 @@ import sys
 import logging
 
 from PySide2.QtWidgets \
-    import QMainWindow, QMenu, QAction, QApplication, QWidget
+    import QMainWindow, QMenu, QAction, QApplication, QWidget, QDockWidget
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 import shiboken2
@@ -88,6 +88,7 @@ def node_editor_main(app):
 
     return scene, view, [node_a, node_b]
 
+
 # NOTE: MayaQWidgetBaseMixinの自動命名はいらないけど、
 # 裏にいかなくなる機能は欲しい。
 
@@ -95,7 +96,6 @@ def node_editor_main(app):
 # class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 class MainWindow(QMainWindow):
     def __init__(self, node_editor_view, parent=None, *args, **kwargs):
-
         super(MainWindow, self).__init__(parent, *args, **kwargs)
         self.initUI(node_editor_view)
 
@@ -105,7 +105,7 @@ class MainWindow(QMainWindow):
         self.setObjectName('RoutineRecipe')
         self.setProperty('saveWindowPref', True)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-
+        self.setAttribute(QtCore.Qt.WA_DontCreateNativeAncestors) # TODO: 必要？
 
         openMenu = QMenu("Open")
         openMenu.addAction("help")
@@ -126,6 +126,29 @@ class MainWindow(QMainWindow):
         # print(ex)
         # self.close()
 
+    def make_maya_standalone_window(self):
+        '''Make a standalone window, though parented under Maya's mainWindow.
+        The parenting under Maya's mainWindow is done so that the QWidget will not
+        auto-destroy itself when the instance variable goes out of scope.
+        '''
+        origParent = self.parent()
+
+        # Parent under the main Maya window
+        mainWindowPtr = omui.MQtUtil.mainWindow()
+        mainWindow = shiboken2.wrapInstance(int(mainWindowPtr), QMainWindow)
+        self.setParent(mainWindow)
+
+        # Make this widget appear as a standalone window even though it is parented
+        if isinstance(self, QDockWidget):
+            self.setWindowFlags(QtCore.Qt.Dialog|QtCore.Qt.FramelessWindowHint)
+        else:
+            self.setWindowFlags(QtCore.Qt.Window)
+
+        # Delete the parent workspace control if applicable
+        if origParent:
+            parentName = origParent.objectName()
+            if parentName and len(parentName) and cmds.workspaceControl(parentName, q=True, exists=True):
+                cmds.deleteUI(parentName, control=True)
 
 def main_start():
     # maya_main_window_ptr = omui.MQtUtil.mainWindow()
@@ -156,6 +179,8 @@ def main_start():
     scene, view, nodes = node_editor_main(app)
     main_window = MainWindow(view)
     # main_window.show(dockable=True)
+    if main_window.parent() is None: # TODO: show()をオーバーライドしてもいいかもしれない
+        main_window.make_maya_standalone_window()
     main_window.show()
     # print(main_window.showRepr())
 
