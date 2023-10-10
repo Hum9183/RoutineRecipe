@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from textwrap import dedent
 
-import maya.cmds as cmds
+from maya import cmds
 
 
 def __register_routinerecipe_startup():
