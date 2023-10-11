@@ -88,10 +88,6 @@ def node_editor_main(app):
 
     return scene, view, [node_a, node_b]
 
-
-# NOTE: MayaQWidgetBaseMixinの自動命名はいらないけど、
-# 裏にいかなくなる機能は欲しい。
-
 # NOTE: DockableMixinを継承すると破棄されなくなる
 # class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 class MainWindow(QMainWindow):
@@ -146,13 +142,6 @@ class MainWindow(QMainWindow):
                 cmds.deleteUI(parentName, control=True)
 
 def main_start():
-    # maya_main_window_ptr = omui.MQtUtil.mainWindow()
-    # print(type(maya_main_window_ptr))
-    # print((maya_main_window_ptr))
-    # ist = shiboken2.wrapInstance(int(maya_main_window_ptr), QWidget)
-    # print(type(ist))
-    # print((ist))
-
     ptr = omui.MQtUtil.findControl('RoutineRecipe')
     if ptr is not None:
         print('存在しています')
@@ -160,14 +149,6 @@ def main_start():
         name = omui.MQtUtil.fullName(shiboken2.getCppPointer(instance)[0])
         cmds.setFocus(name)
         return
-        # cmds.deleteUI(name + 'WorkspaceControl')
-
-    # if test is not None:
-    #     # print(test)
-    #     cmds.setFocus('RoutineRecipe')
-    #     # cmds.deleteUI('RoutineRecipe' + 'WorkspaceControl')
-    #     return
-    #     # cmds.deleteUI('RoutineRecipe')
 
     logging.basicConfig(level='DEBUG')
     app = QApplication.instance()
@@ -181,7 +162,3 @@ def main_start():
 
     sys.exit()
     app.exec_()
-
-# TODO:
-# - Mayaを起動しなおすとDockableが復元されない(https://qiita.com/sporty/items/a26ea7e4691437a6e8c8)
-# - windowの出現位置を覚えさせる NOTE: DockableMixinを継承すると覚えなくなる模様
