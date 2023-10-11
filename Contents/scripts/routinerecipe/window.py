@@ -91,6 +91,10 @@ def node_editor_main(app):
 # NOTE: DockableMixinを継承すると破棄されなくなる
 # class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 class MainWindow(QMainWindow):
+    # TODO:
+    # ・Dockable
+    # ・前回にWindowを出しっぱなしにしていた場合、起動時にWindowを表示する。（組み込みWindowたちと同挙動）
+
     def __init__(self, node_editor_view, parent=None, *args, **kwargs):
         super(MainWindow, self).__init__(parent, *args, **kwargs)
         self.initUI(node_editor_view)
