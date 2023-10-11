@@ -121,11 +121,6 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(node_editor_view)
 
-        ex = cmds.workspaceControl('Routine Recipe', q=True, exists=True)
-
-        # print(ex)
-        # self.close()
-
     def make_maya_standalone_window(self):
         '''Make a standalone window, though parented under Maya's mainWindow.
         The parenting under Maya's mainWindow is done so that the QWidget will not
@@ -182,17 +177,7 @@ def main_start():
     if main_window.parent() is None: # TODO: show()をオーバーライドしてもいいかもしれない
         main_window.make_maya_standalone_window()
     main_window.show()
-    # print(main_window.showRepr())
 
-    # topLevelWidgets = QApplication.topLevelWidgets()
-    # for w in topLevelWidgets:
-    #     print(w.objectName())
-    #     print(w.windowTitle())
-    #     if w.objectName() == 'RoutineRecipe':
-    #         print('RoutineRecipeがすでに存在しているため、削除します')
-    #         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    #         w.close()
-    #         cmds.deleteUI('RoutineRecipe' + 'WorkspaceControl')
 
     sys.exit()
     app.exec_()
