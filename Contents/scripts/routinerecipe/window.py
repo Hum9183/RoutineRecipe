@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from textwrap import dedent
+
 from maya import cmds
 from maya.common.ui import LayoutManager
 
@@ -92,7 +94,7 @@ def node_editor_main(app):
 # class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 class MainWindow(QMainWindow):
     # TODO:
-    # ・Dockable
+    # ・Dockable(自前実装)
     # ・前回にWindowを出しっぱなしにしていた場合、起動時にWindowを表示する。（組み込みWindowたちと同挙動）
 
     def __init__(self, node_editor_view, parent=None, *args, **kwargs):
@@ -158,9 +160,17 @@ def main_start():
     app = QApplication.instance()
     scene, view, nodes = node_editor_main(app)
     main_window = MainWindow(view)
-    # main_window.show(dockable=True)
     if main_window.parent() is None: # TODO: show()をオーバーライドしてもいいかもしれない
         main_window.make_maya_standalone_window()
+
+    # cmd = dedent(
+    #     """
+    #     from routinerecipe import window
+    #     import importlib
+    #     importlib.reload(window)
+    #     window.main_start()
+    #     """)
+    # main_window.show(dockable=True, uiScript=cmd)
     main_window.show()
 
 
