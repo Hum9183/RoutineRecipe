@@ -90,24 +90,20 @@ def node_editor_main(app):
 
     return scene, view, [node_a, node_b]
 
-# NOTE: DockableMixinを継承すると破棄されなくなる
-# class MainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
-class MainWindow(QMainWindow):
-    # TODO:
-    # ・Dockable(自前実装)
-    # ・前回にWindowを出しっぱなしにしていた場合、起動時にWindowを表示する。（組み込みWindowたちと同挙動）
+class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
+    instance_for_restore = None
+    name = 'RoutineRecipe'
+    title = 'Routine Recipe'
 
-    def __init__(self, node_editor_view, parent=None, *args, **kwargs):
-        super(MainWindow, self).__init__(parent, *args, **kwargs)
-        self.initUI(node_editor_view)
+    def __init__(self, parent=None, *args, **kwargs):
+        super(RoutineRecipeMainWindow, self).__init__(parent, *args, **kwargs)
 
-    def initUI(self, node_editor_view):
+    def init(self):
+        self.setObjectName(RoutineRecipeMainWindow.name)
+        self.setWindowTitle(RoutineRecipeMainWindow.title)
+
+    def initGUI(self, node_editor_view):
         self.setGeometry(500, 300, 400, 270)
-        self.setWindowTitle('Routine Recipe')
-        self.setObjectName('RoutineRecipe')
-        self.setProperty('saveWindowPref', True)
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setAttribute(QtCore.Qt.WA_DontCreateNativeAncestors) # TODO: 必要？
 
         openMenu = QMenu("Open")
         openMenu.addAction("help")
@@ -123,56 +119,54 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(node_editor_view)
 
-    def make_maya_standalone_window(self):
-        '''Make a standalone window, though parented under Maya's mainWindow.
-        The parenting under Maya's mainWindow is done so that the QWidget will not
-        auto-destroy itself when the instance variable goes out of scope.
-        '''
-        origParent = self.parent()
-
-        # Parent under the main Maya window
-        mainWindowPtr = omui.MQtUtil.mainWindow()
-        mainWindow = shiboken2.wrapInstance(int(mainWindowPtr), QMainWindow)
-        self.setParent(mainWindow)
-
-        # Make this widget appear as a standalone window even though it is parented
-        if isinstance(self, QDockWidget):
-            self.setWindowFlags(QtCore.Qt.Dialog|QtCore.Qt.FramelessWindowHint)
-        else:
-            self.setWindowFlags(QtCore.Qt.Window)
-
-        # Delete the parent workspace control if applicable
-        if origParent:
-            parentName = origParent.objectName()
-            if parentName and len(parentName) and cmds.workspaceControl(parentName, q=True, exists=True):
-                cmds.deleteUI(parentName, control=True)
-
-def main_start():
-    ptr = omui.MQtUtil.findControl('RoutineRecipe')
-    if ptr is not None:
-        print('存在しています')
-        instance = shiboken2.wrapInstance(int(ptr), QWidget)
-        name = omui.MQtUtil.fullName(shiboken2.getCppPointer(instance)[0])
-        cmds.setFocus(name)
-        return
-
-    logging.basicConfig(level='DEBUG')
+def __create_window():
     app = QApplication.instance()
     scene, view, nodes = node_editor_main(app)
-    main_window = MainWindow(view)
-    if main_window.parent() is None: # TODO: show()をオーバーライドしてもいいかもしれない
-        main_window.make_maya_standalone_window()
+    win = RoutineRecipeMainWindow()
+    win.init()
+    win.initGUI(view)
+    return win
 
-    # cmd = dedent(
-    #     """
-    #     from routinerecipe import window
-    #     import importlib
-    #     importlib.reload(window)
-    #     window.main_start()
-    #     """)
-    # main_window.show(dockable=True, uiScript=cmd)
-    main_window.show()
+def __restore_window():
+    RoutineRecipeMainWindow.instance_for_restore = __create_window() # WARNING: GCに破棄されないようにクラス変数に保存しておく
+    # Add custom mixin widget to the workspace control
+    mixin_ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
+    # Grab the created workspace control with the following.
+    restored_control = omui.MQtUtil.getCurrentParent()
+    omui.MQtUtil.addWidgetToMayaLayout(int(mixin_ptr), int(restored_control))
+
+def __show_window():
+    ''' When the control is restoring, the workspace control has already been created and
+        all that needs to be done is restoring its UI.
+    '''
+    ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
+
+    if ptr:
+        win = shiboken2.wrapInstance(int(ptr), QWidget)
+        if win.isVisible():
+            win.show() # NOTE: show()することで再フォーカスする
+        else:
+            win.setVisible(True)
+    else:
+        # Create a custom mixin widget for the first time
+        win = __create_window()
+
+        # Create a workspace control for the mixin widget by passing all the needed parameters. See workspaceControl command documentation for all available flags.
+        # customMixinWindow.show(dockable=True, height=600, width=480, uiScript='DockableWidgetUIScript(restore=True)')
+        cmd = dedent(
+            """
+            from routinerecipe import window
+            import importlib
+            importlib.reload(window)
+            window.main_start(restore=True)
+            """)
+        win.show(dockable=True, uiScript=cmd)
+
+    return win
 
 
-    sys.exit()
-    app.exec_()
+def main_start(restore=False):
+    if restore:
+        __restore_window()
+    else:
+        __show_window()
