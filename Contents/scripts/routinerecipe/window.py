@@ -23,6 +23,8 @@ from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
 from .nodeeditor.enums import PortType
 
+from .run import run_recipe
+
 
 class MyNodeData(NodeData):
     data_type = NodeDataType(id='MyNodeData', name='My Node Data')
@@ -153,8 +155,7 @@ def node_editor_main(app):
 
     return scene, view
 
-def test_func():
-    print('hello!!!!!!!!!')
+
 
 class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
     instance_for_restore = None
@@ -168,7 +169,7 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         self.setObjectName(RoutineRecipeMainWindow.name)
         self.setWindowTitle(RoutineRecipeMainWindow.title)
 
-    def initGUI(self, node_editor_view):
+    def initGUI(self, node_editor_scene: FlowScene, node_editor_view: FlowView):
         self.setGeometry(500, 300, 400, 270)
 
         openMenu = QMenu("Open")
@@ -180,16 +181,27 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
 
         run_action = QAction('Run', self)
         run_action.setShortcut("Ctrl+R")
-        run_action.triggered.connect(test_func)
+        run_action.triggered.connect(run_recipe)
+
+        save_action = QAction('Save', self)
+        save_action.setShortcut("Ctrl+S")
+        save_action.triggered.connect(lambda arg: node_editor_scene.save())
+
+        load_action = QAction('Load', self)
+        load_action.setShortcut('')
+        load_action.triggered.connect(lambda arg: node_editor_scene.load())
 
         menuBar = self.menuBar()
 
         fileMenu = menuBar.addMenu("File")
         fileMenu.addMenu(openMenu)
         fileMenu.addAction(exitAction)
+        fileMenu.addAction(save_action)
+        fileMenu.addAction(load_action)
 
         run_menu = menuBar.addMenu("Run")
         run_menu.addAction(run_action)
+
 
         self.setCentralWidget(node_editor_view)
 
@@ -199,7 +211,7 @@ def __create_window():
     scene, view= node_editor_main(app)
     win = RoutineRecipeMainWindow()
     win.init()
-    win.initGUI(view)
+    win.initGUI(scene, view)
     return win
 
 def __restore_window():

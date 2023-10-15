@@ -120,7 +120,7 @@ class FlowSceneModel:
                 file_name += ".flow"
 
             with open(file_name, 'w') as f:
-                json.dump(self.__getstate__(), f)
+                json.dump(self.__getstate__(), f, indent=4)
 
     def load(self, file_name=None):
         if file_name is None:
