@@ -36,9 +36,10 @@ class NaiveDataModel(NodeDataModel):
     name = 'NaiveDataModel'
     caption = 'Caption'
     caption_visible = True
-    num_ports = {PortType.input: 2,
-                 PortType.output: 2,
-                 }
+    num_ports = {
+        PortType.input: 2,
+        PortType.output: 2,
+    }
     data_type = {
         PortType.input: {
             0: MyNodeData.data_type,
@@ -62,10 +63,73 @@ class NaiveDataModel(NodeDataModel):
     def embedded_widget(self):
         ...
 
+class FlowData(NodeData):
+    data_type = NodeDataType(id='FlowData', name='Flow')
+
+class StringData(NodeData):
+    data_type = NodeDataType(id='StringData', name='String')
+
+class StartModel(NodeDataModel):
+    name = 'StartModel'
+    caption = 'Start'
+    caption_visible = True
+    num_ports = {
+        PortType.input: 1,
+        PortType.output: 1,
+    }
+    data_type = {
+        PortType.input: {
+            0: FlowData.data_type,
+        },
+        PortType.output: {
+            0: FlowData.data_type,
+        },
+    }
+
+    def out_data(self, port_index):
+        return FlowData()
+
+    def set_in_data(self, node_data, port):
+        ...
+
+    def embedded_widget(self):
+        ...
+
+
+class PrintModel(NodeDataModel):
+    name = 'PrintModel'
+    caption = 'Print'
+    caption_visible = True
+    num_ports = {
+        PortType.input: 2,
+        PortType.output: 2,
+    }
+    data_type = {
+        PortType.input: {
+            0: FlowData.data_type,
+            1: StringData.data_type,
+        },
+        PortType.output: {
+            0: FlowData.data_type,
+            1: StringData.data_type,
+        },
+    }
+
+    def out_data(self, port_index):
+        return StringData()
+
+    def set_in_data(self, node_data, port):
+        ...
+
+    def embedded_widget(self):
+        ...
+
 
 def node_editor_main(app):
     registry = DataModelRegistry()
     registry.register_model(NaiveDataModel, category='My Category')
+    registry.register_model(PrintModel, category='Maya')
+    registry.register_model(StartModel, category='Maya')
     scene = FlowScene(registry=registry)
 
     connection_style = scene.style_collection.connection
@@ -74,21 +138,23 @@ def node_editor_main(app):
     connection_style.use_data_defined_colors = True
 
     view = FlowView(scene)
-    # view.setWindowTitle("Connection (data-defined) color example")
     view.resize(800, 600)
 
-    node_a = scene.create_node(NaiveDataModel)
-    node_b = scene.create_node(NaiveDataModel)
+    # node_a = scene.create_node(NaiveDataModel)
+    # node_b = scene.create_node(NaiveDataModel)
 
-    scene.create_connection(node_a[PortType.output][0],
-                            node_b[PortType.input][0],
-                            )
+    # scene.create_connection(node_a[PortType.output][0],
+    #                         node_b[PortType.input][0],
+    #                         )
 
-    scene.create_connection(node_a[PortType.output][1],
-                            node_b[PortType.input][1],
-                            )
+    # scene.create_connection(node_a[PortType.output][1],
+    #                         node_b[PortType.input][1],
+    #                         )
 
-    return scene, view, [node_a, node_b]
+    return scene, view
+
+def test_func():
+    print('hello!!!!!!!!!')
 
 class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
     instance_for_restore = None
@@ -112,16 +178,25 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         exitAction.setShortcut("Ctrl+G")
         exitAction.triggered.connect(self.close)
 
+        run_action = QAction('Run', self)
+        run_action.setShortcut("Ctrl+R")
+        run_action.triggered.connect(test_func)
+
         menuBar = self.menuBar()
+
         fileMenu = menuBar.addMenu("File")
         fileMenu.addMenu(openMenu)
         fileMenu.addAction(exitAction)
+
+        run_menu = menuBar.addMenu("Run")
+        run_menu.addAction(run_action)
 
         self.setCentralWidget(node_editor_view)
 
 def __create_window():
     app = QApplication.instance()
-    scene, view, nodes = node_editor_main(app)
+    # scene, view, nodes = node_editor_main(app)
+    scene, view= node_editor_main(app)
     win = RoutineRecipeMainWindow()
     win.init()
     win.initGUI(view)
@@ -164,9 +239,25 @@ def __show_window():
 
     return win
 
+def __restart_show_window():
+    """開発用(リスタート用)"""
+    cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
+    win = __create_window()
+    cmd = dedent(
+        """
+        from routinerecipe import window
+        import importlib
+        importlib.reload(window)
+        window.main_start(restore=True)
+        """)
+    win.show(dockable=True, uiScript=cmd)
+
 
 def main_start(restore=False):
     if restore:
         __restore_window()
     else:
         __show_window()
+
+def main_start_debug(restore=False):
+    __restart_show_window()
