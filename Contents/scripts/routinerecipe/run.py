@@ -21,6 +21,10 @@ from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
 from .nodeeditor.enums import PortType
 
-
+# 実装案
+# 1. 各NodeModelにPythonの実行テキストをもたせる(e.g. print())
+# 2. sceneのstateを頼りに、flow順でNodeを読み取っていく。
+# 3. 各Pythonの実装テキストを新規の.pyとして出力する(SourceGeneratorの要領)
+# 4. 出力した.pyを実行する
 def run_recipe():
     print('hello!!!!!!!!!')
