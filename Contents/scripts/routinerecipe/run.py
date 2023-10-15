@@ -20,11 +20,23 @@ from .nodeeditor.data_model_registry import DataModelRegistry
 from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
 from .nodeeditor.enums import PortType
+from .nodeeditor.node import Node
 
 # 実装案
 # 1. 各NodeModelにPythonの実行テキストをもたせる(e.g. print())
 # 2. sceneのstateを頼りに、flow順でNodeを読み取っていく。
 # 3. 各Pythonの実装テキストを新規の.pyとして出力する(SourceGeneratorの要領)
 # 4. 出力した.pyを実行する
-def run_recipe():
-    print('hello!!!!!!!!!')
+def run_recipe(scene: FlowScene):
+    start: Node = __get_start_node(scene)
+    print(start)
+
+
+def __get_start_node(scene: FlowScene) -> Node:
+    start: Node = None
+    nodes: list[Node] = scene.nodes.values()
+    for node in nodes:
+        if node.model.name == 'StartModel':
+            start = node
+
+    return start

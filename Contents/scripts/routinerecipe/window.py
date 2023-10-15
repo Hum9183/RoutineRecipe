@@ -188,7 +188,6 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         save_action.triggered.connect(lambda arg: node_editor_scene.save())
 
         load_action = QAction('Load', self)
-        load_action.setShortcut('')
         load_action.triggered.connect(lambda arg: node_editor_scene.load())
 
         menuBar = self.menuBar()
@@ -199,6 +198,8 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         fileMenu.addAction(save_action)
         fileMenu.addAction(load_action)
 
+        run_action = QAction('Run', self)
+        run_action.triggered.connect(lambda arg: run_recipe(node_editor_scene))
         run_menu = menuBar.addMenu("Run")
         run_menu.addAction(run_action)
 
