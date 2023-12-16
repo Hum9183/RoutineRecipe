@@ -23,14 +23,17 @@ class Node(QObject, Serializable):
     _geometry: NodeGeometry
     _graphics_obj: Optional[NodeGraphicsObject]
 
+    def source_code(self) -> str:   # add
+        return self._model.source_code()
+
     def __init__(self, data_model: NodeDataModel):
-        '''
+        """
         A single Node in the scene
 
         Parameters
         ----------
         data_model : NodeDataModel
-        '''
+        """
         super().__init__()
         self._model = data_model
         self._uid = str(uuid.uuid4())

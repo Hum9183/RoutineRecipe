@@ -59,6 +59,9 @@ class NodeDataModel(QObject, Serializable):
     computing_finished = Signal()
     embedded_widget_size_updated = Signal()
 
+    def source_code(self):  # add
+        self._model.source_code()
+
     def __init__(self, style=None, parent=None):
         super().__init__(parent=parent)
         if style is None:

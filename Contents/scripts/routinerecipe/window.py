@@ -68,8 +68,10 @@ class NaiveDataModel(NodeDataModel):
 class FlowData(NodeData):
     data_type = NodeDataType(id='FlowData', name='Flow')
 
+
 class StringData(NodeData):
     data_type = NodeDataType(id='StringData', name='String')
+
 
 class StartModel(NodeDataModel):
     name = 'StartModel'
@@ -126,6 +128,9 @@ class PrintModel(NodeDataModel):
     def embedded_widget(self):
         ...
 
+    def source_code(self) -> str:  # add
+        return r'print("Hello World!!!!!!!!!!!!")'
+
 
 def node_editor_main(app):
     registry = DataModelRegistry()
@@ -142,19 +147,14 @@ def node_editor_main(app):
     view = FlowView(scene)
     view.resize(800, 600)
 
-    # node_a = scene.create_node(NaiveDataModel)
-    # node_b = scene.create_node(NaiveDataModel)
+    start_node = scene.create_node(StartModel)
+    print_node = scene.create_node(PrintModel)
 
-    # scene.create_connection(node_a[PortType.output][0],
-    #                         node_b[PortType.input][0],
-    #                         )
-
-    # scene.create_connection(node_a[PortType.output][1],
-    #                         node_b[PortType.input][1],
-    #                         )
+    scene.create_connection(start_node[PortType.output][0],
+                            print_node[PortType.input][0],
+                            )
 
     return scene, view
-
 
 
 class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):

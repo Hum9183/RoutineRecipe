@@ -6,22 +6,24 @@ def routine_recipe_startup_command():
 
 
 def routine_recipe_reload_modules():
-    # from humtools.skinweightsio import const, window, selection, auto_skin_binder, mesh_parent_transform_and_skincluster_dict_getter, \
-    #     deformer_weights_exporter, deformer_weights_importer, main, xml_text_scroll_list, option_settings, lang_op_var
+    from routinerecipe import window, run
+    modules = [window, run]
 
-    # from humtools import module_reloader
-    # modules = [const, window, selection, auto_skin_binder, mesh_parent_transform_and_skincluster_dict_getter, \
-    #             deformer_weights_exporter, deformer_weights_importer, main, xml_text_scroll_list, option_settings, lang_op_var]
-    # module_reloader.reload_a_few_times(modules)
-    ...
+    import importlib
+    for m in modules:
+        importlib.reload(m)
 
 def routine_recipe_show_window():
+    routine_recipe_reload_modules()
+
     from routinerecipe import window
-    import importlib
-    importlib.reload(window)
+    # import importlib
+    # importlib.reload(window)
+
     # from routinerecipe.const import Const
     # wnd = Window(Const.TOOL_NAME)
     # wnd.show()
+
     window.main_start()
 
 if __name__ == '__main__':

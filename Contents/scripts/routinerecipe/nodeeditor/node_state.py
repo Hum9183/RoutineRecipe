@@ -11,13 +11,13 @@ if typing.TYPE_CHECKING:
 
 class NodeState:
     def __init__(self, node):
-        '''
+        """
         node_state
 
         Parameters
         ----------
         model : NodeDataModel
-        '''
+        """
         self._ports = {PortType.input: OrderedDict(),
                        PortType.output: OrderedDict()
                        }
