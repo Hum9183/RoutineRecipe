@@ -7,7 +7,7 @@ def routine_recipe_startup_command():
 
 def routine_recipe_reload_modules():
     from routinerecipe import window, run, source_generator
-    modules = [window, run]
+    modules = [window, run, source_generator]
 
     import importlib
     for m in modules:
