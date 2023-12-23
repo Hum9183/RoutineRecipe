@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 from maya import cmds
 
-RR = "RoutineRecipe"
+from ..const import Const
 
 
 class Log:
     @staticmethod
     def log(message):
-        print(u'{} : {}'.format(RR, message))
+        print(u'{} : {}'.format(Const.TOOL_NAME, message))
 
     @staticmethod
     def warning(message):
-        cmds.warning(u'{} : {}'.format(RR, message))
+        cmds.warning(u'{} : {}'.format(Const.TOOL_NAME, message))
 
     @staticmethod
     def error(message):
-        cmds.error(u'{} : {}'.format(RR, message))
+        cmds.error(u'{} : {}'.format(Const.TOOL_NAME, message))
