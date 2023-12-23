@@ -28,6 +28,7 @@ from . import rr_main
 from .nodeeditor.node_state import NodeState
 from .nodeeditor.connection import Connection
 
+from .utils.routinerecipe_error import RoutineRecipeError
 
 # 実装案
 # 1. 各NodeModelにPythonの実行テキストをもたせる(e.g. print())
@@ -36,22 +37,15 @@ from .nodeeditor.connection import Connection
 # 4. 出力した.pyを実行する
 
 
+@RoutineRecipeError.catch
 def run_recipe(flow_scene: FlowScene):
-    start_node: Node | None = __get_start_node(flow_scene, 'StartModel')
-    if start_node is None:
-        print('Startノードが存在しません')
-        return
-
-    source: str | None = __generate_source(start_node)
-    if source is None:
-        print('Startノードに接続がありません')
-        return
-
+    start_node: Node = __get_start_node(flow_scene, 'StartModel')
+    source: str = __generate_source(start_node)
     __write(source)
     __run_rr_script()
 
 
-def __generate_source(start_node: Node) -> str or None:
+def __generate_source(start_node: Node) -> str:
     result: str = dedent('''\
         # -*- coding: utf-8 -*-
         from maya import cmds
@@ -65,7 +59,7 @@ def __generate_source(start_node: Node) -> str or None:
     connections: list[Connection] = node_state.output_connections
 
     if connections == []:
-        return None
+        raise RoutineRecipeError(u'Startノードに接続がありません')
 
     connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
     input_node: Node = connection.input_node
@@ -100,4 +94,4 @@ def __get_start_node(flow_scene: FlowScene, expected_node_name: str) -> Node or 
         if node.model.name == expected_node_name:
             return node
 
-    return None
+    raise RoutineRecipeError(u'Startノードが存在しません')
