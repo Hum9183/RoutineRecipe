@@ -51,7 +51,7 @@ def __run_rr_script():
     rr_main.main()
 
 
-def __get_start_node(flow_scene: FlowScene, expected_node_name: str) -> Node or None:
+def __get_start_node(flow_scene: FlowScene, expected_node_name: str) -> Node:
     nodes: dict = flow_scene.nodes  # TODO: TypedDictを検討
     for node in nodes.values():
         if node.model.name == expected_node_name:
