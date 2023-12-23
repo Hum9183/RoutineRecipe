@@ -29,7 +29,7 @@ from .nodeeditor.node_state import NodeState
 from .nodeeditor.connection import Connection
 
 from .utils.routinerecipe_error import RoutineRecipeError
-from . import source_generator
+from .source_generator import SourceGenerator
 
 # 実装案
 # 1. 各NodeModelにPythonの実行テキストをもたせる(e.g. print())
@@ -41,8 +41,8 @@ from . import source_generator
 @RoutineRecipeError.catch
 def run_recipe(flow_scene: FlowScene):
     start_node: Node = __get_start_node(flow_scene, 'StartModel')
-    source_generator.generate(start_node)
-
+    sg = SourceGenerator()
+    sg.generate(start_node)
     __run_rr_script()
 
 

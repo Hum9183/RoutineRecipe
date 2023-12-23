@@ -6,47 +6,54 @@ from .nodeeditor.node import Node
 from .nodeeditor.node_state import NodeState
 from .utils.routinerecipe_error import RoutineRecipeError
 
-
-def generate(start_node: Node) -> None:
-    source: str = __generate(start_node)
-    __write(source)
+indent_spaces = '    '
+ln = '\n'
 
 
-def __generate(start_node: Node) -> str:
-    result: str = dedent('''\
-        # -*- coding: utf-8 -*-
-        from maya import cmds
-        ''')
-    result = __add_ln(result)
-    result = __add_ln(result)
-    result += 'def main():'
-    result = __add_ln_indent(result)
+class SourceGenerator:
+    __source = ''
 
-    node_state: NodeState = start_node.state
-    connections: list[Connection] = node_state.output_connections
+    def generate(self, start_node: Node) -> None:
+        self.__generate(start_node)
+        self.__write()
 
-    if not connections:
-        raise RoutineRecipeError(u'Startノードに接続がありません')
+    def __generate(self, start_node: Node) -> None:
+        self.__source = dedent('''\
+            # -*- coding: utf-8 -*-
+            from maya import cmds
+            ''')
+        self.__add_ln()
+        self.__add_ln()
 
-    connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
-    input_node: Node = connection.input_node
-    result += input_node.source_code()
-    result = __add_ln(result)
-    return result
+        self.__source += 'def main():'
 
+        self.__add_scripts(start_node)
 
-def __add_ln(source: str) -> str:
-    return f'{source}\n'
+    def __add_scripts(self, node: Node) -> None:
+        node_state: NodeState = node.state
+        connections: list[Connection] = node_state.output_connections
 
+        if not connections:
+            return
 
-def __add_ln_indent(source: str) -> str:
-    return f'{source}\n    '
+        connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
+        input_node: Node = connection.input_node
+        self.__add_ln_indent()
+        self.__source += input_node.source_code()
+        self.__add_ln()
 
+        self.__add_scripts(input_node)
 
-def __write(source: str):
-    # TODO: パスの場所をちゃんと考える
-    path = r'C:\Program Files\Autodesk\ApplicationPlugins\RoutineRecipe\Contents\scripts\routinerecipe\rr_main.py'
-    with open(path, mode='w') as f:
-        f.write(source)
+    def __add_ln(self) -> None:
+        self.__source += ln
 
-    print(u'rr_main.pyを書き換えました')
+    def __add_ln_indent(self) -> None:
+        self.__source += ln + indent_spaces
+
+    def __write(self) -> None:
+        # TODO: パスの場所をちゃんと考える
+        path = r'C:\Program Files\Autodesk\ApplicationPlugins\RoutineRecipe\Contents\scripts\routinerecipe\rr_main.py'
+        with open(path, mode='w') as f:
+            f.write(self.__source)
+
+        print(u'rr_main.pyを書き換えました')
