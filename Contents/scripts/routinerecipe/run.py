@@ -37,17 +37,21 @@ from .nodeeditor.connection import Connection
 
 
 def run_recipe(flow_scene: FlowScene):
-    start_node: Node or None = __get_start_node(flow_scene, 'StartModel')
+    start_node: Node | None = __get_start_node(flow_scene, 'StartModel')
     if start_node is None:
         print('Startノードが存在しません')
         return
 
-    source = __generate_source(start_node)
+    source: str | None = __generate_source(start_node)
+    if source is None:
+        print('Startノードに接続がありません')
+        return
+
     __write(source)
     __run_rr_script()
 
 
-def __generate_source(start_node: Node):
+def __generate_source(start_node: Node) -> str or None:
     result: str = dedent('''\
         # -*- coding: utf-8 -*-
         from maya import cmds
@@ -59,6 +63,9 @@ def __generate_source(start_node: Node):
 
     node_state: NodeState = start_node.state
     connections: list[Connection] = node_state.output_connections
+
+    if connections == []:
+        return None
 
     connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
     input_node: Node = connection.input_node
