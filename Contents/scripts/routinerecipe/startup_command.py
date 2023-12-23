@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import importlib
 
 def routine_recipe_startup_command():
     routine_recipe_reload_modules()
@@ -6,25 +7,15 @@ def routine_recipe_startup_command():
 
 
 def routine_recipe_reload_modules():
-    from routinerecipe import window, run, source_generator
-    modules = [window, run, source_generator]
+    from routinerecipe import source_generator, run, window
+    modules = [source_generator, run, window]
 
-    import importlib
     for m in modules:
         importlib.reload(m)
 
 
 def routine_recipe_show_window():
-    routine_recipe_reload_modules()
-
     from routinerecipe import window
-    # import importlib
-    # importlib.reload(window)
-
-    # from routinerecipe.const import Const
-    # wnd = Window(Const.TOOL_NAME)
-    # wnd.show()
-
     window.main_start()
 
 
