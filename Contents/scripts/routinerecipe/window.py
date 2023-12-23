@@ -22,121 +22,18 @@ from .nodeeditor.data_model_registry import DataModelRegistry
 from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
 from .nodeeditor.enums import PortType
+from .nodeeditor.nodedatamodels.print_model import PrintModel
+from .nodeeditor.nodedatamodels.start_model import StartModel
+from .nodeeditor.nodedatamodels.string_model import StringModel
 
 from .run import run_recipe
 
 
-class MyNodeData(NodeData):
-    data_type = NodeDataType(id='MyNodeData', name='My Node Data')
-
-
-class SimpleNodeData(NodeData):
-    data_type = NodeDataType(id='SimpleData', name='Simple Data')
-
-
-class NaiveDataModel(NodeDataModel):
-    name = 'NaiveDataModel'
-    caption = 'Caption'
-    caption_visible = True
-    num_ports = {
-        PortType.input: 2,
-        PortType.output: 2,
-    }
-    data_type = {
-        PortType.input: {
-            0: MyNodeData.data_type,
-            1: SimpleNodeData.data_type
-        },
-        PortType.output: {
-            0: MyNodeData.data_type,
-            1: SimpleNodeData.data_type
-        },
-    }
-
-    def out_data(self, port_index):
-        if port_index == 0:
-            return MyNodeData()
-        elif port_index == 1:
-            return SimpleNodeData()
-
-    def set_in_data(self, node_data, port):
-        ...
-
-    def embedded_widget(self):
-        ...
-
-class FlowData(NodeData):
-    data_type = NodeDataType(id='FlowData', name='Flow')
-
-
-class StringData(NodeData):
-    data_type = NodeDataType(id='StringData', name='String')
-
-
-class StartModel(NodeDataModel):
-    name = 'StartModel'
-    caption = 'Start'
-    caption_visible = True
-    num_ports = {
-        PortType.input: 1,
-        PortType.output: 1,
-    }
-    data_type = {
-        PortType.input: {
-            0: FlowData.data_type,
-        },
-        PortType.output: {
-            0: FlowData.data_type,
-        },
-    }
-
-    def out_data(self, port_index):
-        return FlowData()
-
-    def set_in_data(self, node_data, port):
-        ...
-
-    def embedded_widget(self):
-        ...
-
-
-class PrintModel(NodeDataModel):
-    name = 'PrintModel'
-    caption = 'Print'
-    caption_visible = True
-    num_ports = {
-        PortType.input: 2,
-        PortType.output: 2,
-    }
-    data_type = {
-        PortType.input: {
-            0: FlowData.data_type,
-            1: StringData.data_type,
-        },
-        PortType.output: {
-            0: FlowData.data_type,
-            1: StringData.data_type,
-        },
-    }
-
-    def out_data(self, port_index):
-        return StringData()
-
-    def set_in_data(self, node_data, port):
-        ...
-
-    def embedded_widget(self):
-        ...
-
-    def source_code(self) -> str:  # add
-        return r'print("Hello World!!!!!!!!!!!!")'
-
-
 def node_editor_main(app):
     registry = DataModelRegistry()
-    registry.register_model(NaiveDataModel, category='My Category')
-    registry.register_model(PrintModel, category='Maya')
-    registry.register_model(StartModel, category='Maya')
+    registry.register_model(StartModel, category='systems')
+    registry.register_model(PrintModel, category='cmds')
+    registry.register_model(StringModel, category='variables')
     scene = FlowScene(registry=registry)
 
     connection_style = scene.style_collection.connection
@@ -149,10 +46,16 @@ def node_editor_main(app):
 
     start_node = scene.create_node(StartModel)
     print_node = scene.create_node(PrintModel)
+    string_node = scene.create_node(StringModel)
 
-    scene.create_connection(start_node[PortType.output][0],
-                            print_node[PortType.input][0],
-                            )
+    scene.create_connection(
+        start_node[PortType.output][0],
+        print_node[PortType.input][0],
+    )
+    scene.create_connection(
+        string_node[PortType.output][0],
+        print_node[PortType.input][1],
+    )
 
     return scene, view
 

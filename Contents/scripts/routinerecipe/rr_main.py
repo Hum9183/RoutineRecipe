@@ -3,4 +3,4 @@ from maya import cmds
 
 
 def main():
-    print("Hello World!!!!!!!!!!!!")
+    print('test')

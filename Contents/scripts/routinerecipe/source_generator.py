@@ -56,5 +56,3 @@ class SourceGenerator:
         path = r'C:\Program Files\Autodesk\ApplicationPlugins\RoutineRecipe\Contents\scripts\routinerecipe\rr_main.py'
         with open(path, mode='w') as f:
             f.write(self.__source)
-
-        print(u'rr_main.pyを書き換えました')
