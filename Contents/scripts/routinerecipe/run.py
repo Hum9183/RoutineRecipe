@@ -37,7 +37,11 @@ from .nodeeditor.connection import Connection
 
 
 def run_recipe(flow_scene: FlowScene):
-    start_node: Node = __get_start_node(flow_scene, 'StartModel')
+    start_node: Node or None = __get_start_node(flow_scene, 'StartModel')
+    if start_node is None:
+        print('Startノードが存在しません')
+        return
+
     source = __generate_source(start_node)
     __write(source)
     __run_rr_script()
@@ -83,11 +87,10 @@ def __run_rr_script():
     rr_main.main()
 
 
-def __get_start_node(flow_scene: FlowScene, expected_node_name: str) -> Node:
-    target_node: Node = None
+def __get_start_node(flow_scene: FlowScene, expected_node_name: str) -> Node or None:
     nodes: dict = flow_scene.nodes  # TODO: TypedDictを検討
     for node in nodes.values():
         if node.model.name == expected_node_name:
-            target_node = node
+            return node
 
-    return target_node
+    return None
