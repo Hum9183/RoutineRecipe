@@ -11,7 +11,8 @@ ln = '\n'
 
 
 class SourceGenerator:
-    __source = ''
+    def __init__(self):
+        self.__source = ''
 
     def generate(self, start_node: Node) -> None:
         self.__generate(start_node)
