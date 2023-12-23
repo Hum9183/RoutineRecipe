@@ -29,6 +29,7 @@ from .nodeeditor.node_state import NodeState
 from .nodeeditor.connection import Connection
 
 from .utils.routinerecipe_error import RoutineRecipeError
+from . import source_generator
 
 # 実装案
 # 1. 各NodeModelにPythonの実行テキストをもたせる(e.g. print())
@@ -40,47 +41,47 @@ from .utils.routinerecipe_error import RoutineRecipeError
 @RoutineRecipeError.catch
 def run_recipe(flow_scene: FlowScene):
     start_node: Node = __get_start_node(flow_scene, 'StartModel')
-    source: str = __generate_source(start_node)
-    __write(source)
+    source_generator.generate(start_node)
+
     __run_rr_script()
 
 
-def __generate_source(start_node: Node) -> str:
-    result: str = dedent('''\
-        # -*- coding: utf-8 -*-
-        from maya import cmds
-        ''')
-    result = __add_ln(result)
-    result = __add_ln(result)
-    result += 'def main():'
-    result = __add_ln_indent(result)
-
-    node_state: NodeState = start_node.state
-    connections: list[Connection] = node_state.output_connections
-
-    if connections == []:
-        raise RoutineRecipeError(u'Startノードに接続がありません')
-
-    connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
-    input_node: Node = connection.input_node
-    result += input_node.source_code()
-    result = __add_ln(result)
-    return result
-
-
-def __add_ln(source: str) -> str:
-    return f'{source}\n'
+# def __generate_source(start_node: Node) -> str:
+#     result: str = dedent('''\
+#         # -*- coding: utf-8 -*-
+#         from maya import cmds
+#         ''')
+#     result = __add_ln(result)
+#     result = __add_ln(result)
+#     result += 'def main():'
+#     result = __add_ln_indent(result)
+#
+#     node_state: NodeState = start_node.state
+#     connections: list[Connection] = node_state.output_connections
+#
+#     if connections == []:
+#         raise RoutineRecipeError(u'Startノードに接続がありません')
+#
+#     connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
+#     input_node: Node = connection.input_node
+#     result += input_node.source_code()
+#     result = __add_ln(result)
+#     return result
 
 
-def __add_ln_indent(source: str) -> str:
-    return f'{source}\n    '
+# def __add_ln(source: str) -> str:
+#     return f'{source}\n'
+#
+#
+# def __add_ln_indent(source: str) -> str:
+#     return f'{source}\n    '
 
 
-def __write(source: str):
-    path = r'C:\Program Files\Autodesk\ApplicationPlugins\RoutineRecipe\Contents\scripts\routinerecipe\rr_main.py'
-    with open(path, mode='w') as f:
-        f.write(source)
-    print(u'rr_main.pyを書き換えました')
+# def __write(source: str):
+#     path = r'C:\Program Files\Autodesk\ApplicationPlugins\RoutineRecipe\Contents\scripts\routinerecipe\rr_main.py'
+#     with open(path, mode='w') as f:
+#         f.write(source)
+#     print(u'rr_main.pyを書き換えました')
 
 
 def __run_rr_script():
