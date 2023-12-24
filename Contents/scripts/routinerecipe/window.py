@@ -151,7 +151,9 @@ def __show_window():
 
 def __restart_show_window():
     """開発用(リスタート用)"""
-    cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
+    if omui.MQtUtil.findControl(RoutineRecipeMainWindow.name):
+        cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
+
     win = __create_window()
     cmd = dedent(
         """
