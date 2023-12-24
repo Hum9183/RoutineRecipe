@@ -53,8 +53,7 @@ def get_children_symbols(module: ModuleType):
     stmt: _ast.stmt
     for stmt in tree.body:
         # from xxx import でないならcontinue
-        if stmt.__class__ != _ast.ImportFrom\
-                or stmt.__class__ != _ast.ImportFrom:
+        if stmt.__class__ != _ast.ImportFrom:
             continue
 
         imp_frm = cast(_ast.ImportFrom, stmt)
