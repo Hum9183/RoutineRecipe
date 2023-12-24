@@ -341,7 +341,7 @@ class FlowSceneModel:
     @contextlib.contextmanager
     def _new_node_context(self, data_model_name, *, emit_placed=False):
         'Context manager: creates Node/yields it, handling necessary Signals'
-        data_model = self._registry.create(data_model_name)
+        data_model: NodeDataModel = self._registry.create(data_model_name)
         node = Node(data_model)
         yield node
         self._nodes[node.id] = node

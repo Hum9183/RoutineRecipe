@@ -6,7 +6,7 @@ from ..nodedata.flow_data import FlowData
 
 class StartModel(NodeDataModel):
     name = 'StartModel'
-    caption = 'Start'
+    caption = 'start'
     caption_visible = True
     num_ports = {
         PortType.input: 0,

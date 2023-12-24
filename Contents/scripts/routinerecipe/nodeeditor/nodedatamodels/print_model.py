@@ -7,7 +7,7 @@ from ..nodedata.string_data import StringData
 
 class PrintModel(NodeDataModel):
     name = 'PrintModel'
-    caption = 'Print'
+    caption = 'print'
     caption_visible = True
     num_ports = {
         PortType.input: 2,

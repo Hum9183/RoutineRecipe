@@ -2,22 +2,15 @@
 from textwrap import dedent
 
 from maya import cmds
-from maya.common.ui import LayoutManager
-
-import sys
-import logging
 
 from PySide2.QtWidgets \
-    import QMainWindow, QMenu, QAction, QApplication, QWidget, QDockWidget
-from PySide2 import QtWidgets
-from PySide2 import QtCore
+    import QMainWindow, QMenu, QAction, QApplication, QWidget
 import shiboken2
 
 from maya.app.general import mayaMixin
 
 from maya import OpenMayaUI as omui
 
-from .nodeeditor.node_data import NodeData, NodeDataModel, NodeDataType
 from .nodeeditor.data_model_registry import DataModelRegistry
 from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
@@ -106,17 +99,18 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         run_menu = menuBar.addMenu("Run")
         run_menu.addAction(run_action)
 
-
         self.setCentralWidget(node_editor_view)
+
 
 def __create_window():
     app = QApplication.instance()
     # scene, view, nodes = node_editor_main(app)
-    scene, view= node_editor_main(app)
+    scene, view = node_editor_main(app)
     win = RoutineRecipeMainWindow()
     win.init()
     win.initGUI(scene, view)
     return win
+
 
 def __restore_window():
     RoutineRecipeMainWindow.instance_for_restore = __create_window() # WARNING: GCに破棄されないようにクラス変数に保存しておく
@@ -126,10 +120,11 @@ def __restore_window():
     restored_control = omui.MQtUtil.getCurrentParent()
     omui.MQtUtil.addWidgetToMayaLayout(int(mixin_ptr), int(restored_control))
 
+
 def __show_window():
-    ''' When the control is restoring, the workspace control has already been created and
+    """ When the control is restoring, the workspace control has already been created and
         all that needs to be done is restoring its UI.
-    '''
+    """
     ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
 
     if ptr:
@@ -147,13 +142,12 @@ def __show_window():
         cmd = dedent(
             """
             from routinerecipe import window
-            import importlib
-            importlib.reload(window)
             window.main_start(restore=True)
             """)
         win.show(dockable=True, uiScript=cmd)
 
     return win
+
 
 def __restart_show_window():
     """開発用(リスタート用)"""
@@ -162,8 +156,6 @@ def __restart_show_window():
     cmd = dedent(
         """
         from routinerecipe import window
-        import importlib
-        importlib.reload(window)
         window.main_start(restore=True)
         """)
     win.show(dockable=True, uiScript=cmd)
@@ -175,5 +167,27 @@ def main_start(restore=False):
     else:
         __show_window()
 
+
 def main_start_debug(restore=False):
     __restart_show_window()
+
+    """
+    from routinerecipe import window
+    from routinerecipe.module_reloader import deep_reload
+
+    def main():
+        deep_reload(window, 'routinerecipe')
+        window.main_start_debug()
+
+    main()
+    """
+
+# TODO:
+# window closeのコールバックで
+# cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
+# を実行する
+
+# TODO:
+# 再起動ボタンを付ける
+# main_start_debug()と等価のもの
+# あったほうが便利なため

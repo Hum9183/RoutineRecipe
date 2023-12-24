@@ -9,7 +9,7 @@ from ..nodedata.string_data import StringData
 
 class StringModel(NodeDataModel):
     name = 'StringModel'
-    caption = 'String'
+    caption = 'string'
     caption_visible = True
     num_ports = {
         PortType.input: 0,
