@@ -109,11 +109,7 @@ def get_children_symbols(module: ModuleType):
 
 def __is_package(module: ModuleType) -> bool:
     file = module.__file__
-
-    if file is None or file.endswith('__init__.py'):
-        return True
-    else:
-        return False
+    return file is None or file.endswith('__init__.py')
 
 
 def __reload(children_symbols: Dict[ModuleType, List[str]]) -> None:
