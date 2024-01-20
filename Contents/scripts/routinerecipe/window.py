@@ -101,6 +101,11 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         run_menu = menuBar.addMenu("Run")
         run_menu.addAction(run_action)
 
+        restart_action = QAction('Restart', self)
+        restart_action.triggered.connect(lambda *arg: restart())
+        dev_menu = menuBar.addMenu("Dev")
+        dev_menu.addAction(restart_action)
+
         self.setCentralWidget(node_editor_view)
 
 
@@ -147,27 +152,7 @@ def restart() -> None:
     win.show(dockable=True, uiScript=cmd)
 
 
-def main_start_debug(restore=False):
-    # NOTE: debug用
-    restart()
-
-    """
-    from routinerecipe import window
-    from routinerecipe.module_reloader import deep_reload
-
-    def main():
-        deep_reload(window, 'routinerecipe')
-        window.main_start_debug()
-
-    main()
-    """
-
 # TODO:
 # window closeのコールバックで
 # cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
 # を実行する
-
-# TODO:
-# 再起動ボタンを付ける
-# main_start_debug()と等価のもの
-# あったほうが便利なため

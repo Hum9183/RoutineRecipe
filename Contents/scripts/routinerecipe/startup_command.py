@@ -2,7 +2,9 @@
 
 
 def routine_recipe_startup_command():
-    # WARNING: reloadは行わない。開発時は開発用のコマンドを使用する。
+    # WARNING:
+    # startupコマンドではreloadは行わない。
+    # 開発時は「Dev」=>「Restart」で再起動する(reloadされる)
     from routinerecipe import window
     window.startup()
 
