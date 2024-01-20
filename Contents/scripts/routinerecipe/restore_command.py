@@ -2,8 +2,8 @@
 
 
 def routine_recipe_restore_command():
-    from routinerecipe import window
-    window.restore()
+    from routinerecipe import main
+    main.restore()
 
 
 if __name__ == '__main__':
