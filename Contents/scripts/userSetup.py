@@ -9,7 +9,6 @@ def __register_routinerecipe_startup():
         """
         import routinerecipe.startup
         routinerecipe.startup.execute()
-        print("kitemasu02")
         """)
     cmds.evalDeferred(cmd)
 
