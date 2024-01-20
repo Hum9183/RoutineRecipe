@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import inspect
 from textwrap import dedent
 
 from maya import cmds
@@ -11,6 +12,7 @@ from maya.app.general import mayaMixin
 
 from maya import OpenMayaUI as omui
 
+from . import restore_command
 from .nodeeditor.data_model_registry import DataModelRegistry
 from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
@@ -102,7 +104,7 @@ class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
         self.setCentralWidget(node_editor_view)
 
 
-def __create_window():
+def __create_window() -> RoutineRecipeMainWindow:
     app = QApplication.instance()
     # scene, view, nodes = node_editor_main(app)
     scene, view = node_editor_main(app)
@@ -112,66 +114,42 @@ def __create_window():
     return win
 
 
-def __restore_window():
-    RoutineRecipeMainWindow.instance_for_restore = __create_window() # WARNING: GCに破棄されないようにクラス変数に保存しておく
-    # Add custom mixin widget to the workspace control
-    mixin_ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
+def restore() -> None:
+    RoutineRecipeMainWindow.instance_for_restore = __create_window()    # WARNING: GCに破棄されないようにクラス変数に保存しておく
+    ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
     # Grab the created workspace control with the following.
     restored_control = omui.MQtUtil.getCurrentParent()
-    omui.MQtUtil.addWidgetToMayaLayout(int(mixin_ptr), int(restored_control))
+    omui.MQtUtil.addWidgetToMayaLayout(int(ptr), int(restored_control))
 
 
-def __show_window():
-    """ When the control is restoring, the workspace control has already been created and
-        all that needs to be done is restoring its UI.
-    """
+def startup() -> None:
     ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
 
     if ptr:
         win = shiboken2.wrapInstance(int(ptr), QWidget)
         if win.isVisible():
-            win.show() # NOTE: show()することで再フォーカスする
+            win.show()  # NOTE: show()することで再フォーカスする
         else:
             win.setVisible(True)
     else:
-        # Create a custom mixin widget for the first time
         win = __create_window()
-
-        # Create a workspace control for the mixin widget by passing all the needed parameters. See workspaceControl command documentation for all available flags.
-        # customMixinWindow.show(dockable=True, height=600, width=480, uiScript='DockableWidgetUIScript(restore=True)')
-        cmd = dedent(
-            """
-            from routinerecipe import window
-            window.main_start(restore=True)
-            """)
+        cmd = dedent(inspect.getsource(restore_command))
         win.show(dockable=True, uiScript=cmd)
 
-    return win
 
-
-def __restart_show_window():
-    """開発用(リスタート用)"""
+def restart() -> None:
+    """開発用(再起動用)"""
     if omui.MQtUtil.findControl(RoutineRecipeMainWindow.name):
         cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
 
     win = __create_window()
-    cmd = dedent(
-        """
-        from routinerecipe import window
-        window.main_start(restore=True)
-        """)
+    cmd = dedent(inspect.getsource(restore_command))
     win.show(dockable=True, uiScript=cmd)
 
 
-def main_start(restore=False):
-    if restore:
-        __restore_window()
-    else:
-        __show_window()
-
-
 def main_start_debug(restore=False):
-    __restart_show_window()
+    # NOTE: debug用
+    restart()
 
     """
     from routinerecipe import window
