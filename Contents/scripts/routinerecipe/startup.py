@@ -4,6 +4,7 @@ from textwrap import dedent
 
 from maya import cmds, mel
 
+from .const import Const
 from .main_commands import startup_command
 
 
@@ -17,8 +18,8 @@ def execute():
 
     startup_command_str = inspect.getsource(startup_command)
     cmds.menuItem(
-        'RoutineRecipe',
-        label='RoutineRecipe',
-        annotation='Run {}'.format('RoutineRecipe'),
+        Const.TOOL_NAME,
+        label=Const.TOOL_NAME,
+        annotation='Run {}'.format(Const.TOOL_NAME),
         echoCommand=True,
         command=dedent(startup_command_str))
