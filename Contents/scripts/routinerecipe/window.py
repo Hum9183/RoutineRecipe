@@ -56,9 +56,10 @@ def node_editor_main(app):
 
 
 class RoutineRecipeMainWindow(mayaMixin.MayaQWidgetDockableMixin, QMainWindow):
-    instance_for_restore = None
+    restored_instance = None
     name = 'RoutineRecipe'
     title = 'Routine Recipe'
+    workspace_control = f'{name}WorkspaceControl'
 
     def __init__(self, parent=None, *args, **kwargs):
         super(RoutineRecipeMainWindow, self).__init__(parent, *args, **kwargs)
@@ -120,9 +121,8 @@ def __create_window() -> RoutineRecipeMainWindow:
 
 
 def restore() -> None:
-    RoutineRecipeMainWindow.instance_for_restore = __create_window()    # WARNING: GCに破棄されないようにクラス変数に保存しておく
+    RoutineRecipeMainWindow.restored_instance = __create_window()    # WARNING: GCに破棄されないようにクラス変数に保存しておく
     ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
-    # Grab the created workspace control with the following.
     restored_control = omui.MQtUtil.getCurrentParent()
     omui.MQtUtil.addWidgetToMayaLayout(int(ptr), int(restored_control))
 
@@ -139,13 +139,19 @@ def startup() -> None:
     else:
         win = __create_window()
         cmd = dedent(inspect.getsource(restore_command))
+
+        # 空のWindowが生成されてしまった場合
+        if cmds.workspaceControl(RoutineRecipeMainWindow.workspace_control , q=True, exists=True):
+            # 既存のWorkspaceControlを一旦削除する
+            cmds.deleteUI(RoutineRecipeMainWindow.workspace_control, control=True)
+
         win.show(dockable=True, uiScript=cmd)
 
 
 def restart() -> None:
     """開発用(再起動用)"""
     if omui.MQtUtil.findControl(RoutineRecipeMainWindow.name):
-        cmds.deleteUI(RoutineRecipeMainWindow.name + 'WorkspaceControl', control=True)
+        cmds.deleteUI(RoutineRecipeMainWindow.workspace_control, control=True)
 
     win = __create_window()
     cmd = dedent(inspect.getsource(restore_command))
