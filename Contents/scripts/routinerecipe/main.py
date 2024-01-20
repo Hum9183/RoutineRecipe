@@ -13,7 +13,7 @@ from .node_editor_setup import setup
 from .window import RoutineRecipeMainWindow
 
 
-def create_window() -> RoutineRecipeMainWindow:
+def __create_window() -> RoutineRecipeMainWindow:
     app = QApplication.instance()
     scene, view = setup(app)
     win = RoutineRecipeMainWindow()
@@ -23,7 +23,7 @@ def create_window() -> RoutineRecipeMainWindow:
 
 
 def restore() -> None:
-    RoutineRecipeMainWindow.restored_instance = create_window()    # WARNING: GCに破棄されないようにクラス変数に保存しておく
+    RoutineRecipeMainWindow.restored_instance = __create_window()    # WARNING: GCに破棄されないようにクラス変数に保存しておく
     ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
     restored_control = omui.MQtUtil.getCurrentParent()
     omui.MQtUtil.addWidgetToMayaLayout(int(ptr), int(restored_control))
@@ -39,7 +39,7 @@ def startup() -> None:
         else:
             win.setVisible(True)
     else:
-        win = create_window()
+        win = __create_window()
         cmd = dedent(inspect.getsource(restore_command))
 
         # 空のWindowが生成されてしまった場合
@@ -55,6 +55,6 @@ def restart() -> None:
     if omui.MQtUtil.findControl(RoutineRecipeMainWindow.name):
         cmds.deleteUI(RoutineRecipeMainWindow.workspace_control, control=True)
 
-    win = create_window()
+    win = __create_window()
     cmd = dedent(inspect.getsource(restore_command))
     win.show(dockable=True, uiScript=cmd)
