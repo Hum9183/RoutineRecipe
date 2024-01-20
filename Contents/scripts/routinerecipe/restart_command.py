@@ -3,7 +3,7 @@
 
 def routine_recipe_restart_command():
     from routinerecipe import main, const, module_reloader
-    module_reloader.deep_reload(main, const.MODULE_NAME)
+    module_reloader.deep_reload(main, 'routinerecipe')
     main.restart()
 
 
