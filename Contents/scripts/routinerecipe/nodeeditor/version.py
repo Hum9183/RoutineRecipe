@@ -22,6 +22,7 @@ class VersionProxy(UserString):
     4. A fallback in case none of the above match - resulting in a version of
         0.0.unknown
     """
+
     def __init__(self):
         self._version = None
 

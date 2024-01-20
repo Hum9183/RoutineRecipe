@@ -23,7 +23,7 @@ class Node(QObject, Serializable):
     _geometry: NodeGeometry
     _graphics_obj: Optional[NodeGraphicsObject]
 
-    def source_code(self) -> str:   # add
+    def source_code(self) -> str:  # add
         return self._model.source_code()
 
     def __init__(self, data_model: NodeDataModel):
@@ -125,7 +125,7 @@ class Node(QObject, Serializable):
             node_path, node = pending.popleft()
             seen.add(node)
             if node is not self:
-                yield tuple(node_path) + (node, )
+                yield tuple(node_path) + (node,)
 
             node_path = list(node_path) + [node]
             for node in get_connection_nodes(node.state):

@@ -3,9 +3,9 @@ import typing
 from PySide2.QtCore import QRectF
 from PySide2.QtGui import QPainter, QPainterPath
 from PySide2.QtWidgets import (QGraphicsBlurEffect, QGraphicsItem,
-                            QGraphicsObject, QGraphicsSceneHoverEvent,
-                            QGraphicsSceneMouseEvent, QStyleOptionGraphicsItem,
-                            QWidget)
+                               QGraphicsObject, QGraphicsSceneHoverEvent,
+                               QGraphicsSceneMouseEvent, QStyleOptionGraphicsItem,
+                               QWidget)
 
 from .connection_painter import ConnectionPainter
 from .node_connection_interaction import NodeConnectionInteraction
@@ -14,20 +14,19 @@ from .port import PortType, opposite_port
 if typing.TYPE_CHECKING:
     from .connection import Connection  # noqa
 
-
 debug_drawing = False
 
 
 class ConnectionGraphicsObject(QGraphicsObject):
     def __init__(self, scene, connection):
-        '''
+        """
         connection_graphics_object
 
         Parameters
         ----------
         scene : FlowScene
         connection : Connection
-        '''
+        """
         super().__init__()
         self._scene = scene
         self._connection = connection

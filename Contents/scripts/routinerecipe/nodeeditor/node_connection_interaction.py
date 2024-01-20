@@ -17,7 +17,6 @@ if typing.TYPE_CHECKING:
     from .node import Node  # noqa
     from .port import Port  # noqa
 
-
 logger = logging.getLogger(__name__)
 
 

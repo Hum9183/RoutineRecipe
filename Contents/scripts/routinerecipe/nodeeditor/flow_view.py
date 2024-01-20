@@ -3,9 +3,9 @@ import math
 
 from PySide2.QtCore import QLineF, QPoint, QRectF, Qt
 from PySide2.QtGui import (QContextMenuEvent, QKeyEvent, QKeySequence,
-                        QMouseEvent, QPainter, QPen, QShowEvent, QWheelEvent)
+                           QMouseEvent, QPainter, QPen, QShowEvent, QWheelEvent)
 from PySide2.QtWidgets import (QAction, QGraphicsView, QLineEdit, QMenu,
-                            QTreeWidget, QTreeWidgetItem, QWidgetAction)
+                               QTreeWidget, QTreeWidgetItem, QWidgetAction)
 
 from .connection_graphics_object import ConnectionGraphicsObject
 from .flow_scene import FlowScene

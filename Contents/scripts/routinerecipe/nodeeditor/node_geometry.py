@@ -426,11 +426,11 @@ class NodeGeometry:
                 or target_node.graphics_object is None):
             raise ValueError('Uninitialized node')
         converter_node_pos = (
-            source_node.graphics_object.pos()
-            + source_node.geometry.port_scene_position(source_port, source_port_index)
-            + target_node.graphics_object.pos()
-            + target_node.geometry.port_scene_position(target_port, target_port_index)
-        ) / 2.0
+                                     source_node.graphics_object.pos()
+                                     + source_node.geometry.port_scene_position(source_port, source_port_index)
+                                     + target_node.graphics_object.pos()
+                                     + target_node.geometry.port_scene_position(target_port, target_port_index)
+                             ) / 2.0
         converter_node_pos.setX(converter_node_pos.x() - new_node.geometry.width / 2.0)
         converter_node_pos.setY(converter_node_pos.y() - new_node.geometry.height / 2.0)
         return converter_node_pos

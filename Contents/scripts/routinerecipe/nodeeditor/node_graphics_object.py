@@ -3,10 +3,10 @@ import typing
 from PySide2.QtCore import QPoint, QRectF, QSize, QSizeF, Qt
 from PySide2.QtGui import QCursor, QPainter
 from PySide2.QtWidgets import (QGraphicsDropShadowEffect, QGraphicsItem,
-                            QGraphicsObject, QGraphicsProxyWidget,
-                            QGraphicsSceneContextMenuEvent,
-                            QGraphicsSceneHoverEvent, QGraphicsSceneMouseEvent,
-                            QSizePolicy, QStyleOptionGraphicsItem, QWidget)
+                               QGraphicsObject, QGraphicsProxyWidget,
+                               QGraphicsSceneContextMenuEvent,
+                               QGraphicsSceneHoverEvent, QGraphicsSceneMouseEvent,
+                               QSizePolicy, QStyleOptionGraphicsItem, QWidget)
 
 from .enums import ConnectionPolicy
 from .node_connection_interaction import NodeConnectionInteraction
@@ -289,7 +289,7 @@ class NodeGraphicsObject(QGraphicsObject):
         pos = event.pos()
         geom = self._node.geometry
         if self._node.model.resizable() and geom.resize_rect.contains(
-            QPoint(int(pos.x()), int(pos.y()))
+                QPoint(int(pos.x()), int(pos.y()))
         ):
             self.setCursor(QCursor(Qt.SizeFDiagCursor))
         else:

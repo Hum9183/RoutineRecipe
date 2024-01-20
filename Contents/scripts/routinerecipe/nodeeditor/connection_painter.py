@@ -10,7 +10,6 @@ from .style import ConnectionStyle
 if typing.TYPE_CHECKING:
     from .connection import Connection  # noqa
 
-
 use_debug_drawing = False
 
 

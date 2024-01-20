@@ -37,7 +37,7 @@ class SourceGenerator:
         if not connections:
             return
 
-        connection: Connection = connections[0]     # とりあえず決め打ちで1つ目だけ
+        connection: Connection = connections[0]  # とりあえず決め打ちで1つ目だけ
         input_node: Node = connection.input_node
         self.__add_ln_indent()
         self.__source += input_node.source_code()

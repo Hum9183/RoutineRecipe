@@ -24,7 +24,7 @@ def restart() -> None:
 
 
 def restore() -> None:
-    RoutineRecipeMainWindow.restored_instance = __create_window()    # WARNING: GCに破棄されないようにクラス変数に保存しておく
+    RoutineRecipeMainWindow.restored_instance = __create_window()  # WARNING: GCに破棄されないようにクラス変数に保存しておく
     ptr = omui.MQtUtil.findControl(RoutineRecipeMainWindow.name)
     restored_control = omui.MQtUtil.getCurrentParent()
     omui.MQtUtil.addWidgetToMayaLayout(int(ptr), int(restored_control))
@@ -44,7 +44,7 @@ def startup() -> None:
         cmd = dedent(inspect.getsource(restore_command))
 
         # 空のWindowが生成されてしまった場合
-        if cmds.workspaceControl(RoutineRecipeMainWindow.workspace_control , q=True, exists=True):
+        if cmds.workspaceControl(RoutineRecipeMainWindow.workspace_control, q=True, exists=True):
             # 既存のWorkspaceControlを一旦削除する
             cmds.deleteUI(RoutineRecipeMainWindow.workspace_control, control=True)
 

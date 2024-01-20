@@ -184,7 +184,7 @@ class NodeStyle(Style):
     def __init__(self, json_style=None):
         self.normal_boundary_color = QColor()
         self.selected_boundary_color = QColor()
-        self.gradient_colors = ((0, QColor()), )
+        self.gradient_colors = ((0, QColor()),)
         self.shadow_color = QColor()
         self.font_color = QColor()
         self.font_color_faded = QColor()

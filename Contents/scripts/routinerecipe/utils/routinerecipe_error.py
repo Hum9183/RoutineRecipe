@@ -10,6 +10,7 @@ class RoutineRecipeError(Exception):
     @staticmethod
     def catch(function):
         """RoutineRecipeErrorを検知するデコレータ"""
+
         @functools.wraps(function)
         def wrapper(*args, **keywords):
             try:
@@ -18,6 +19,7 @@ class RoutineRecipeError(Exception):
                 e.log()
                 return
             return return_value
+
         return wrapper
 
     def log(self):

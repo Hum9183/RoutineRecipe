@@ -76,7 +76,6 @@ class StringModel(NodeDataModel):
             self.__string = string
             self.data_updated.emit(0)
 
-
 #
 # class NumberSourceDataModel(NodeDataModel):
 #     name = "NumberSource"
