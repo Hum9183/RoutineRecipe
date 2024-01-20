@@ -4,7 +4,7 @@ from textwrap import dedent
 
 from maya import cmds, mel
 
-from . import startup_command
+from .main_commands import startup_command
 
 
 def execute():

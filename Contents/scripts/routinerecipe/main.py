@@ -8,7 +8,7 @@ from maya import OpenMayaUI as omui
 from PySide2.QtWidgets import QApplication, QWidget
 import shiboken2
 
-from . import restore_command
+from .main_commands import restore_command
 from .node_editor_setup import setup
 from .window import RoutineRecipeMainWindow
 

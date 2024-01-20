@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QMainWindow, QMenu, QAction
 
 from maya.app.general import mayaMixin
 
-from . import restart_command
+from .main_commands import restart_command
 from .const import Const
 from .nodeeditor.flow_scene import FlowScene
 from .nodeeditor.flow_view import FlowView
