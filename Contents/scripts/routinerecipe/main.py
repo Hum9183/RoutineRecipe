@@ -13,13 +13,14 @@ from .node_editor_setup import setup
 from .window import RoutineRecipeMainWindow
 
 
-def __create_window() -> RoutineRecipeMainWindow:
-    app = QApplication.instance()
-    scene, view = setup(app)
-    win = RoutineRecipeMainWindow()
-    win.init()
-    win.initGUI(scene, view)
-    return win
+def restart() -> None:
+    """開発用(再起動用)"""
+    if omui.MQtUtil.findControl(RoutineRecipeMainWindow.name):
+        cmds.deleteUI(RoutineRecipeMainWindow.workspace_control, control=True)
+
+    win = __create_window()
+    cmd = dedent(inspect.getsource(restore_command))
+    win.show(dockable=True, uiScript=cmd)
 
 
 def restore() -> None:
@@ -50,11 +51,10 @@ def startup() -> None:
         win.show(dockable=True, uiScript=cmd)
 
 
-def restart() -> None:
-    """開発用(再起動用)"""
-    if omui.MQtUtil.findControl(RoutineRecipeMainWindow.name):
-        cmds.deleteUI(RoutineRecipeMainWindow.workspace_control, control=True)
-
-    win = __create_window()
-    cmd = dedent(inspect.getsource(restore_command))
-    win.show(dockable=True, uiScript=cmd)
+def __create_window() -> RoutineRecipeMainWindow:
+    app = QApplication.instance()
+    scene, view = setup(app)
+    win = RoutineRecipeMainWindow()
+    win.init()
+    win.initGUI(scene, view)
+    return win
